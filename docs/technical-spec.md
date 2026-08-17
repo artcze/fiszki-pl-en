@@ -161,6 +161,8 @@ LibreTranslate base URL and API key, if required, must be server-only environmen
 
 If LibreTranslate supplies only one translation per request, the adapter may return that one result. The MVP does not require generating synonyms through an LLM or secondary provider.
 
+LibreTranslate supports requesting alternative translation candidates. These alternatives are machine-translation hypotheses and are not guaranteed to represent distinct dictionary meanings. The MVP accepts this limitation: it returns one candidate when only one usable candidate is available and does not invent synonyms or use a fallback provider.
+
 ## 6. Data model
 
 Create a Supabase migration for a `flashcards` table:
