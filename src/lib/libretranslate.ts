@@ -24,7 +24,8 @@ export class LibreTranslateService implements TranslationService {
   constructor(options: LibreTranslateOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/u, "");
     this.apiKey = options.apiKey;
-    this.fetch = options.fetch ?? globalThis.fetch;
+    const fetchImpl = options.fetch;
+    this.fetch = fetchImpl ? (input, init) => fetchImpl(input, init) : (input, init) => globalThis.fetch(input, init);
     this.timeoutMs = options.timeoutMs ?? LIBRETRANSLATE_TIMEOUT_MS;
   }
 

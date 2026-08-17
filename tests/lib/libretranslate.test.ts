@@ -9,6 +9,20 @@ function jsonResponse(body: unknown, status = 200): Response {
 describe("LibreTranslateService", () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("calls the default global fetch without rebinding its receiver", async () => {
+    const receivers: unknown[] = [];
+    const fetchMock = vi.fn(function (this: unknown) {
+      receivers.push(this);
+      return Promise.resolve(jsonResponse({ translatedText: "castle" }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const service = new LibreTranslateService({ baseUrl: "https://translate.example" });
+
+    await expect(service.translatePolishWord("zamek")).resolves.toEqual(["castle"]);
+    expect(receivers).toEqual([globalThis]);
   });
 
   it("requests Polish-to-English text with three alternatives and an API key", async () => {
