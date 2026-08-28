@@ -18,7 +18,7 @@ Aplikacja pozwala zalogowanemu użytkownikowi wpisać jedno polskie słowo, pobr
   - Delete — usunięcie własnej fiszki,
 - przypisanie każdej fiszki do zalogowanego użytkownika,
 - izolacja danych użytkowników przy użyciu Supabase Row Level Security,
-- walidacja danych wejściowych i obsługa błędów providera tłumaczeń.
+- walidacja danych wejściowych i obsługa błędów usługi tłumaczeniowej.
 
 ## Główny przepływ użytkownika
 
@@ -45,6 +45,8 @@ Aplikacja pozwala zalogowanemu użytkownikowi wpisać jedno polskie słowo, pobr
 - Zod
 - Vitest
 - pgTAP / Supabase database tests
+- Playwright
+- GitHub Actions
 - Cloudflare Workers
 
 ## Wymagania lokalne
@@ -56,73 +58,59 @@ Aplikacja pozwala zalogowanemu użytkownikowi wpisać jedno polskie słowo, pobr
 
 ## Instalacja
 
-Sklonuj repozytorium i zainstaluj zależności:
-
-~~~bash
+```bash
 git clone https://github.com/artcze/fiszki-pl-en.git
 cd fiszki-pl-en
 npm ci
-~~~
+```
 
 Utwórz lokalne pliki środowiskowe:
 
-~~~bash
+```bash
 cp .env.example .env
 cp .env.example .dev.vars
-~~~
+```
 
 Projekt używa następujących zmiennych:
 
-~~~text
+```text
 SUPABASE_URL=
 SUPABASE_KEY=
 LIBRETRANSLATE_BASE_URL=
 LIBRETRANSLATE_API_KEY=
-~~~
-
-Dla LibreTranslate można użyć przykładowej wartości:
-
-~~~text
-LIBRETRANSLATE_BASE_URL=https://libretranslate.com
-~~~
-
-Klucz API zależy od używanej instancji LibreTranslate.
+```
 
 ## Lokalny Supabase
 
 Uruchom lokalny stack:
 
-~~~bash
+```bash
 npx supabase start
-~~~
+```
 
 W razie potrzeby odtwórz bazę wraz z migracjami:
 
-~~~bash
+```bash
 npx supabase db reset
-~~~
+```
 
-Migracje znajdują się w:
-
-~~~text
-supabase/migrations/
-~~~
+Migracje znajdują się w `supabase/migrations/`.
 
 Tabela `public.flashcards` przechowuje fiszki użytkowników. Dostęp do rekordów jest ograniczony przez polityki Row Level Security wykorzystujące `auth.uid()`.
 
 ## Uruchomienie aplikacji
 
-~~~bash
+```bash
 npm run dev
-~~~
+```
 
 ## Testy
 
 ### Testy TypeScript / Vitest
 
-~~~bash
+```bash
 npm test
-~~~
+```
 
 Obejmują między innymi:
 
@@ -138,33 +126,48 @@ Obejmują między innymi:
 
 Po uruchomieniu lokalnego Supabase:
 
-~~~bash
+```bash
 npx supabase test db
-~~~
+```
 
-Test:
+Test `supabase/tests/database/flashcards_rls.test.sql` weryfikuje między innymi, że użytkownik nie może odczytać, zmodyfikować ani usunąć fiszki należącej do innego użytkownika.
 
-~~~text
-supabase/tests/database/flashcards_rls.test.sql
-~~~
+### Test głównego przepływu E2E
 
-weryfikuje między innymi, że użytkownik nie może odczytać, zmodyfikować ani usunąć fiszki należącej do innego użytkownika.
+```bash
+npm run test:e2e
+```
 
-## Quality checks
+`tests/e2e/main-flow.spec.ts` przechodzi przez rejestrację/logowanie, tłumaczenie, utworzenie, listowanie, edycję i usunięcie fiszki z kontrolowanym lokalnym serwerem testowym LibreTranslate.
 
-~~~bash
+## Kontrole jakości
+
+Pełna sekwencja zbliżona do CI:
+
+```bash
+npm ci
+npx astro sync
 npm run lint
 npm test
 npm run build
-~~~
+npx supabase test db
+npm run test:e2e
+```
 
-GitHub Actions wykonuje te kontrole dla pushy i pull requestów skierowanych do gałęzi `main`.
+GitHub Actions wykonuje kontrole jakości dla pushy i pull requestów skierowanych do gałęzi `main`.
 
 ## Dokumentacja projektu
 
-- Product Requirements Document: [`docs/prd.md`](docs/prd.md)
-- Technical Specification: [`docs/technical-spec.md`](docs/technical-spec.md)
-- Test Plan: [`context/foundation/test-plan.md`](context/foundation/test-plan.md)
+Kanoniczne dokumenty znajdują się w `context/foundation/`:
+
+- [Indeks dokumentacji](context/foundation/README.md)
+- [PRD](context/foundation/prd.md)
+- [Tech Stack](context/foundation/tech-stack.md)
+- [Specyfikacja techniczna](context/foundation/technical-spec.md)
+- [Roadmapa](context/foundation/roadmap.md)
+- [Plan testów](context/foundation/test-plan.md)
+
+Pliki w `docs/` pozostają tylko jako zgodne wstecz odnośniki do kanonicznej dokumentacji.
 
 ## Model bezpieczeństwa
 
@@ -183,7 +186,7 @@ Dzięki temu izolacja danych nie zależy wyłącznie od warstwy UI lub endpoint�
 
 ## Zakres MVP
 
-MVP koncentruje się na tworzeniu i zarządzaniu prostymi fiszkami Polish → English.
+MVP koncentruje się na tworzeniu i zarządzaniu prostymi fiszkami polski → angielski.
 
 Poza zakresem MVP pozostają między innymi:
 
@@ -196,4 +199,4 @@ Poza zakresem MVP pozostają między innymi:
 - import zbiorczy,
 - współdzielenie fiszek pomiędzy użytkownikami.
 
-Szczegółowy zakres i kryteria produktu znajdują się w [`docs/prd.md`](docs/prd.md).
+Szczegółowy zakres i kryteria produktu znajdują się w [`context/foundation/prd.md`](context/foundation/prd.md).

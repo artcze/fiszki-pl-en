@@ -1,54 +1,86 @@
 # Rules for AI
 
-This file provides guidance to AI Agent when working with code in this repository.
+This file provides operational guidance to an AI agent working with code in this repository.
+
+## Reference
+
+Canonical project context lives in `context/foundation/`:
+
+- `prd.md` — product requirements and business rules
+- `tech-stack.md` — stack and technical boundaries
+- `technical-spec.md` — implementation contract
+- `roadmap.md` — current delivery state
+- `test-plan.md` — risks and quality gates
+
+Human-facing project/certification documentation is maintained in Polish. This agent instruction file remains in English for concise tooling guidance.
 
 ## Commands
 
-- `npm run dev` — start dev server (Cloudflare workerd runtime)
+- `npm run dev` — start dev server
 - `npm run build` — production build (SSR via `@astrojs/cloudflare`)
 - `npm run preview` — preview production build
-- `npm run lint` — ESLint with type-checked rules
+- `npm run lint` — ESLint
 - `npm run lint:fix` — auto-fix lint issues
-- `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
+- `npm run format` — Prettier
+- `npm test` — Vitest unit/API tests
+- `npm run test:e2e` — Playwright main-flow E2E
+- `npx supabase test db` — pgTAP / Supabase database tests
 
-Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
+Pre-commit hooks use husky + lint-staged.
 
 ## Architecture
 
-**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase auth, and shadcn/ui components. Deployed to Cloudflare Workers.
+**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase Auth/PostgreSQL/RLS, and LibreTranslate behind a server-side `TranslationService` boundary. Cloudflare Workers is the configured runtime target.
 
 ### Rendering mode
 
-Full server-side rendering (`output: "server"` in astro.config.mjs). All pages are server-rendered by default. API routes must export `const prerender = false`.
+Full server-side rendering (`output: "server"` in `astro.config.mjs`). Astro pages are server-rendered by default; React is used for focused interactive islands.
 
 ### Auth flow
 
-- `src/lib/supabase.ts` — creates a Supabase SSR client using `@supabase/ssr` with cookie-based sessions. Uses `astro:env/server` for `SUPABASE_URL` and `SUPABASE_KEY` (server-only secrets declared in astro.config.mjs `env.schema`).
-- `src/middleware.ts` — runs on every request, resolves the current user, attaches to `context.locals.user`. Redirects unauthenticated users away from routes listed in `PROTECTED_ROUTES`.
-- API endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`
-- Auth pages: `src/pages/auth/{signin,signup,confirm-email}.astro`
-- Protected page example: `src/pages/dashboard.astro`
+- `src/lib/supabase.ts` — Supabase SSR client with cookie-based sessions.
+- `src/middleware.ts` — resolves current user and protects `/dashboard`.
+- API auth endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`.
+- Auth pages: `src/pages/auth/{signin,signup,confirm-email}.astro`.
+- Protected product page: `src/pages/dashboard.astro`.
+
+### Flashcard ownership
+
+- `POST /api/flashcards` derives `user_id` from `context.locals.user`.
+- Read/update/delete operations are scoped to the authenticated user.
+- Supabase RLS is the database-level authorization boundary for SELECT/INSERT/UPDATE/DELETE.
+- Client-provided ownership must never be trusted.
+
+### Translation flow
+
+- `src/pages/api/translations.ts` is authenticated.
+- Provider access stays server-side.
+- `src/lib/translations.ts` validates input and normalizes/deduplicates output.
+- `src/lib/libretranslate.ts` implements provider interaction.
 
 ### Key conventions
 
-- **Path alias**: `@/*` maps to `./src/*` (tsconfig paths).
-- **Astro components** for static content/layout; **React components** only when interactivity is needed.
-- **Tailwind class merging**: use the `cn()` helper from `@/lib/utils` (clsx + tailwind-merge) for conditional/merged class names. Do not concatenate class strings manually.
-- **shadcn/ui**: components live in `src/components/ui/`, "new-york" style variant. Install new ones with `npx shadcn@latest add [name]`.
-- **API routes**: use uppercase `GET`, `POST` exports; validate input with zod.
-- **Supabase migrations**: `supabase/migrations/` using naming format `YYYYMMDDHHmmss_short_description.sql`. Always enable RLS on new tables with granular per-operation, per-role policies.
-- **React**: no Next.js directives ("use client" etc.). Extract hooks to `src/components/hooks/`.
-- **Services/helpers** go in `src/lib/` (or `src/lib/services/` for extracted business logic).
-- **Shared types** (entities, DTOs) go in `src/types.ts`.
-
-### Environment
-
-- Node.js v22.14.0 (see `.nvmrc`)
-- Env vars: `SUPABASE_URL`, `SUPABASE_KEY` (copy `.env.example` to `.env` for Node, or `.dev.vars` for Cloudflare local dev)
-- Local Supabase: `npx supabase start` (requires Docker)
-- Cloudflare local dev: secrets go in `.dev.vars` (gitignored)
-- Deploy: `npx wrangler deploy` (requires Cloudflare account + `wrangler` auth)
+- Path alias: `@/*` maps to `./src/*`.
+- Astro components for static/server-rendered UI; React only where interactivity is needed.
+- API boundaries validate input with Zod.
+- Supabase migrations live in `supabase/migrations/`.
+- New persisted user resources require granular RLS policies.
+- Services/helpers live in `src/lib/`.
+- Do not expose secrets or service-role credentials to client code.
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs lint + build on every push and PR to master. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
+GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes and pull requests targeting `main` and performs:
+
+1. dependency installation,
+2. Astro sync,
+3. lint,
+4. Vitest tests,
+5. production build,
+6. Playwright Chromium installation,
+7. local Supabase startup,
+8. database tests,
+9. E2E environment setup,
+10. Playwright E2E.
+
+Do not infer that CI is green merely from workflow configuration; verify the latest run when release/certification readiness depends on it.
