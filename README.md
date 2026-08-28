@@ -1,175 +1,199 @@
-# 10x Astro Starter
+# Fiszki PL-EN
 
-![](./public/template.png)
+MVP aplikacji webowej dla polskojęzycznych osób uczących się języka angielskiego.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+Aplikacja pozwala zalogowanemu użytkownikowi wpisać jedno polskie słowo, pobrać propozycje angielskich tłumaczeń, wybrać właściwe znaczenie i zapisać je jako prywatną fiszkę. Użytkownik może następnie przeglądać, edytować i usuwać swoje fiszki.
 
-## Tech Stack
+## Główne funkcje
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- rejestracja, logowanie i wylogowanie użytkownika,
+- chroniony obszar aplikacji dla zalogowanych użytkowników,
+- tłumaczenie pojedynczego polskiego słowa na język angielski,
+- od 1 do 3 unikalnych propozycji tłumaczenia,
+- zapis wybranego tłumaczenia jako fiszki,
+- pełny CRUD fiszek:
+  - Create — utworzenie fiszki,
+  - Read — lista własnych fiszek,
+  - Update — edycja własnej fiszki,
+  - Delete — usunięcie własnej fiszki,
+- przypisanie każdej fiszki do zalogowanego użytkownika,
+- izolacja danych użytkowników przy użyciu Supabase Row Level Security,
+- walidacja danych wejściowych i obsługa błędów providera tłumaczeń.
 
-## Prerequisites
+## Główny przepływ użytkownika
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+1. Użytkownik rejestruje się lub loguje.
+2. Otwiera chroniony dashboard.
+3. Wpisuje jedno polskie słowo.
+4. Aplikacja pobiera angielskie propozycje z usługi tłumaczeniowej.
+5. Wyniki są normalizowane, deduplikowane i ograniczane do maksymalnie trzech.
+6. Użytkownik wybiera jedno tłumaczenie.
+7. Potwierdza utworzenie fiszki.
+8. Fiszka zostaje zapisana w bazie i przypisana do aktualnego użytkownika.
+9. Użytkownik może ją później edytować lub usunąć.
 
-## Getting Started
+## Stack technologiczny
 
-1. Clone the repository:
+- Astro 6
+- React 19
+- TypeScript 5
+- Supabase
+  - Authentication
+  - PostgreSQL
+  - Row Level Security
+- LibreTranslate
+- Zod
+- Vitest
+- pgTAP / Supabase database tests
+- Cloudflare Workers
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+## Wymagania lokalne
 
-2. Install dependencies:
+- Node.js 22.14.0 — zgodnie z `.nvmrc`
+- npm
+- Docker — wymagany do lokalnego Supabase
+- Supabase CLI dostępne przez zależność projektu
 
-```bash
-npm install
-```
+## Instalacja
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+Sklonuj repozytorium i zainstaluj zależności:
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+~~~bash
+git clone https://github.com/artcze/fiszki-pl-en.git
+cd fiszki-pl-en
+npm ci
+~~~
 
-```bash
-cp .env.example .dev.vars
-```
+Utwórz lokalne pliki środowiskowe:
 
-5. Run the development server:
-
-```bash
-npm run dev
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
-
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
-
-```bash
+~~~bash
 cp .env.example .env
-```
+cp .env.example .dev.vars
+~~~
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
+Projekt używa następujących zmiennych:
 
-```bash
-npx supabase init
-```
+~~~text
+SUPABASE_URL=
+SUPABASE_KEY=
+LIBRETRANSLATE_BASE_URL=
+LIBRETRANSLATE_API_KEY=
+~~~
 
-3. Start the local stack (downloads Docker images on first run):
+Dla LibreTranslate można użyć przykładowej wartości:
 
-```bash
+~~~text
+LIBRETRANSLATE_BASE_URL=https://libretranslate.com
+~~~
+
+Klucz API zależy od używanej instancji LibreTranslate.
+
+## Lokalny Supabase
+
+Uruchom lokalny stack:
+
+~~~bash
 npx supabase start
-```
+~~~
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+W razie potrzeby odtwórz bazę wraz z migracjami:
 
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
+~~~bash
+npx supabase db reset
+~~~
 
-5. To stop the stack when done:
+Migracje znajdują się w:
 
-```bash
-npx supabase stop
-```
+~~~text
+supabase/migrations/
+~~~
 
-The local Studio UI is available at `http://localhost:54323`.
+Tabela `public.flashcards` przechowuje fiszki użytkowników. Dostęp do rekordów jest ograniczony przez polityki Row Level Security wykorzystujące `auth.uid()`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+## Uruchomienie aplikacji
 
-### Using a cloud Supabase project instead
+~~~bash
+npm run dev
+~~~
 
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
+## Testy
 
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
+### Testy TypeScript / Vitest
 
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
+~~~bash
+npm test
+~~~
 
-### Email confirmation in local development
+Obejmują między innymi:
 
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
+- API fiszek,
+- autoryzację operacji CRUD,
+- walidację danych,
+- API tłumaczeń,
+- normalizację i deduplikację tłumaczeń,
+- obsługę błędów LibreTranslate,
+- klienta API fiszek.
 
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
+### Testy bezpieczeństwa bazy danych
 
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+Po uruchomieniu lokalnego Supabase:
 
-### Auth routes
+~~~bash
+npx supabase test db
+~~~
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+Test:
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+~~~text
+supabase/tests/database/flashcards_rls.test.sql
+~~~
 
-## Deployment
+weryfikuje między innymi, że użytkownik nie może odczytać, zmodyfikować ani usunąć fiszki należącej do innego użytkownika.
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+## Quality checks
 
-1. Build the project:
-
-```bash
+~~~bash
+npm run lint
+npm test
 npm run build
-```
+~~~
 
-2. Deploy with Wrangler:
+GitHub Actions wykonuje te kontrole dla pushy i pull requestów skierowanych do gałęzi `main`.
 
-```bash
-npx wrangler deploy
-```
+## Dokumentacja projektu
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+- Product Requirements Document: [`docs/prd.md`](docs/prd.md)
+- Technical Specification: [`docs/technical-spec.md`](docs/technical-spec.md)
+- Test Plan: [`context/foundation/test-plan.md`](context/foundation/test-plan.md)
 
-## CI
+## Model bezpieczeństwa
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+Identyfikator właściciela fiszki nie jest przyjmowany od klienta.
 
-## License
+Serwer pobiera aktualnego użytkownika z sesji Supabase i wykorzystuje jego `user.id` podczas operacji na fiszkach.
 
-MIT
+Dodatkową granicę bezpieczeństwa stanowią polityki PostgreSQL Row Level Security dla operacji:
+
+- SELECT,
+- INSERT,
+- UPDATE,
+- DELETE.
+
+Dzięki temu izolacja danych nie zależy wyłącznie od warstwy UI lub endpointów API.
+
+## Zakres MVP
+
+MVP koncentruje się na tworzeniu i zarządzaniu prostymi fiszkami Polish → English.
+
+Poza zakresem MVP pozostają między innymi:
+
+- spaced repetition,
+- quizy,
+- statystyki nauki,
+- gamifikacja,
+- audio i wymowa,
+- przykładowe zdania,
+- import zbiorczy,
+- współdzielenie fiszek pomiędzy użytkownikami.
+
+Szczegółowy zakres i kryteria produktu znajdują się w [`docs/prd.md`](docs/prd.md).
