@@ -98,7 +98,7 @@ Sprawdza między innymi:
 R-01 uznajemy za pokryte, gdy:
 
 1. testy RLS dla dwóch użytkowników przechodzą,
-2. testy API potwierdzają własność wyprowadzana z sesji,
+2. testy API potwierdzają własność wyprowadzaną z sesji,
 3. żadna operacja CRUD nie przyjmuje `user_id` od klienta.
 
 ## 5. R-02 — błędna normalizacja tłumaczeń
@@ -157,7 +157,7 @@ Walidacja występuje zarówno na poziomie API, jak i constraintów PostgreSQL.
 LibreTranslate może:
 
 - zwrócić błąd HTTP,
-- przekroczyć przekroczenie limitu czasu,
+- przekroczyć limit czasu,
 - zwrócić niepoprawny JSON,
 - zwrócić niepoprawny format odpowiedzi,
 - zwrócić brak użytecznych tłumaczeń.
