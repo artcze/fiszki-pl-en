@@ -16,7 +16,7 @@ Human-facing certification documentation is maintained in Polish. Code identifie
 
 ## Stack
 
-- Astro 6 SSR with React 19 islands and TypeScript
+- Astro 7 SSR with React 19 islands and TypeScript
 - Tailwind CSS 4
 - Supabase PostgreSQL, Auth, and Row Level Security
 - LibreTranslate behind `TranslationService`
@@ -54,6 +54,6 @@ Database and E2E tests require local Supabase. Do not claim a check passed unles
 - Do not introduce dependencies without a clear current requirement.
 - Add or update tests for changed behavior and preserve the deterministic main-flow E2E test.
 - Do not suppress, skip, or conceal failing checks. Report failures and their cause.
-- Preserve Astro 6 unless a separate migration is explicitly requested.
+- Preserve Astro 7 unless a separate major-version migration is explicitly requested.
 - Do not modify unrelated files or overwrite user changes.
 - Do not commit unless explicitly requested.

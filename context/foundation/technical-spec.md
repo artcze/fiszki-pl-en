@@ -2,7 +2,7 @@
 
 ## 1. Zakres i zasady
 
-Dokument opisuje aktualny kontrakt implementacyjny MVP zdefiniowanego w [`prd.md`](prd.md). Aplikacja jest serwerowo renderowanym projektem Astro 6, z wyspami React używanymi tylko do interakcji wymagających stanu klienta.
+Dokument opisuje aktualny kontrakt implementacyjny MVP zdefiniowanego w [`prd.md`](prd.md). Aplikacja jest serwerowo renderowanym projektem Astro 7, z wyspami React używanymi tylko do interakcji wymagających stanu klienta.
 
 Priorytetem jest mały, czytelny przepływ end-to-end. Nie wprowadzamy dodatkowych warstw architektonicznych, jeśli nie rozwiązują konkretnego problemu MVP.
 
@@ -236,6 +236,6 @@ Pozostałe prace przed zgłoszeniem dotyczą głównie utrzymania aktualnej doku
 
 ## 14. Ograniczenia
 
-- Astro pozostaje na głównej wersji 6.
+- Astro pozostaje na głównej wersji 7.
 - Rozbudowa o spaced repetition, quizy, statystyki, import dokumentów i inne funkcje z sekcji „Poza zakresem MVP” nie jest częścią MVP.
 - Nie dodajemy dodatkowych abstrakcji ani zależności bez konkretnego wymagania.

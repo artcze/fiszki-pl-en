@@ -34,7 +34,7 @@ Aplikacja pozwala zalogowanemu użytkownikowi wpisać jedno polskie słowo, pobr
 
 ## Stack technologiczny
 
-- Astro 6
+- Astro 7
 - React 19
 - TypeScript 5
 - Supabase

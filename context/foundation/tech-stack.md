@@ -8,7 +8,7 @@ Projekt jest aplikacją webową SSR. Warstwa serwerowa i routing są realizowane
 
 | Obszar | Technologia | Rola w MVP |
 |---|---|---|
-| Framework aplikacji | Astro 6 | SSR, routing, strony i endpointy API |
+| Framework aplikacji | Astro 7 | SSR, routing, strony i endpointy API |
 | Interaktywność | React 19 | Interaktywne komponenty wymagające stanu po stronie klienta |
 | Język | TypeScript 5 | Typowanie kodu aplikacji i testów |
 | Baza danych | PostgreSQL w Supabase | Trwałe przechowywanie fiszek |
@@ -94,4 +94,4 @@ W MVP nie są potrzebne:
 
 ## 8. Ograniczenia wersji
 
-Projekt pozostaje na Astro 6. Migracja do nowej głównej wersji nie jest częścią zakresu MVP ani porządkowania dokumentacji certyfikacyjnej.
+Projekt pozostaje na głównej wersji Astro 7. Migracja do kolejnej głównej wersji nie jest częścią zakresu MVP ani porządkowania dokumentacji certyfikacyjnej.

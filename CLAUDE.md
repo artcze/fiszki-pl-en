@@ -30,7 +30,7 @@ Pre-commit hooks use husky + lint-staged.
 
 ## Architecture
 
-**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase Auth/PostgreSQL/RLS, and LibreTranslate behind a server-side `TranslationService` boundary. Cloudflare Workers is the configured runtime target.
+**Astro 7 SSR app** with React 19 islands, Tailwind 4, Supabase Auth/PostgreSQL/RLS, and LibreTranslate behind a server-side `TranslationService` boundary. Cloudflare Workers is the configured runtime target.
 
 ### Rendering mode
 
