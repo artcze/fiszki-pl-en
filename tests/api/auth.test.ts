@@ -59,6 +59,42 @@ describe("auth API", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
+  it.each([
+    ["missing email", new URLSearchParams({ password: "Secure-pass-123!" })],
+    ["invalid email", new URLSearchParams({ email: "not-an-email", password: "Secure-pass-123!" })],
+  ])("rejects invalid sign-in input: %s", async (_case, body) => {
+    const requestContext = context("/api/auth/signin");
+    requestContext.request = new Request("http://localhost/api/auth/signin", {
+      method: "POST",
+      body,
+    });
+
+    const response = await signIn(requestContext);
+
+    expect(response.status).toBe(302);
+    expect(redirectError(response)).toBe("Podaj prawidłowy adres e-mail i hasło.");
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["missing password", new URLSearchParams({ email: "user@example.test" })],
+    ["short password", new URLSearchParams({ email: "user@example.test", password: "12345" })],
+  ])("rejects invalid sign-up input: %s", async (_case, body) => {
+    const requestContext = context("/api/auth/signup");
+    requestContext.request = new Request("http://localhost/api/auth/signup", {
+      method: "POST",
+      body,
+    });
+
+    const response = await signUp(requestContext);
+
+    expect(response.status).toBe(302);
+    expect(redirectError(response)).toBe(
+      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 6 znaków.",
+    );
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
   it("does not expose configuration details during sign in", async () => {
     vi.mocked(createClient).mockReturnValue(null);
 
