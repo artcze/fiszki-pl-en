@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-deprecated -- tseslint.config() is the only way to use extends; core defineConfig has incompatible API */
 import { includeIgnoreFile } from "@eslint/config-helpers";
+import { defineConfig } from "eslint/config";
 import eslint from "@eslint/js";
 import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintPluginAstro from "eslint-plugin-astro";
@@ -11,7 +11,8 @@ import tseslint from "typescript-eslint";
 
 const gitignorePath = path.resolve(import.meta.dirname, ".gitignore");
 
-const baseConfig = tseslint.config({
+const baseConfig = defineConfig({
+  files: ["**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}"],
   extends: [eslint.configs.recommended, tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
   languageOptions: {
     parserOptions: {
@@ -37,7 +38,7 @@ const baseConfig = tseslint.config({
   },
 });
 
-const reactConfig = tseslint.config({
+const reactConfig = defineConfig({
   files: ["**/*.{js,jsx,ts,tsx}"],
   extends: [pluginReact.configs.flat.recommended],
   languageOptions: {
@@ -59,7 +60,7 @@ const reactConfig = tseslint.config({
   },
 });
 
-const astroConfig = tseslint.config({
+const astroConfig = defineConfig({
   files: ["**/*.astro"],
   rules: {
     "astro/no-set-html-directive": "error",
@@ -68,7 +69,23 @@ const astroConfig = tseslint.config({
   },
 });
 
-export default tseslint.config(
+const nodeConfig = defineConfig({
+  files: ["**/*.config.{js,cjs,mjs}"],
+  languageOptions: {
+    globals: {
+      process: "readonly",
+    },
+  },
+});
+
+const apiConfig = defineConfig({
+  files: ["src/pages/api/**/*.{ts,tsx}"],
+  rules: {
+    "no-console": ["error", { allow: ["warn", "error"] }],
+  },
+});
+
+export default defineConfig(
   includeIgnoreFile(gitignorePath),
   { ignores: ["supabase/.temp/**"] },
   baseConfig,
@@ -76,5 +93,7 @@ export default tseslint.config(
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
+  nodeConfig,
+  apiConfig,
   eslintPluginPrettier,
 );
