@@ -50,7 +50,7 @@ export default function SignInForm({ serverError }: Props) {
           setEmail(v);
           clearError("email");
         }}
-        placeholder="you@example.com"
+        placeholder="adres@example.com"
         error={errors.email}
         icon={<Mail className="size-4" />}
       />
