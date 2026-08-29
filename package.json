@@ -20,7 +20,6 @@
     "@astrojs/check": "^0.9.10",
     "@astrojs/cloudflare": "^14.2.5",
     "@astrojs/react": "^6.0.4",
-    "@astrojs/sitemap": "^3.7.3",
     "@eslint/config-helpers": "^0.6.0",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/ssr": "^0.10.3",
