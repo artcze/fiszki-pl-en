@@ -26,7 +26,8 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "ASTRO_E2E=true npm run dev -- --mode e2e --host 127.0.0.1 --port 4322",
+      command: "npm run dev -- --mode e2e --host 127.0.0.1 --port 4322",
+      env: { CLOUDFLARE_ENV: "e2e" },
       url: baseURL,
       reuseExistingServer: false,
       timeout: 60_000,

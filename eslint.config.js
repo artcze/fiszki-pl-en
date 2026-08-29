@@ -87,7 +87,7 @@ const apiConfig = defineConfig({
 
 export default defineConfig(
   includeIgnoreFile(gitignorePath),
-  { ignores: ["supabase/.temp/**"] },
+  { ignores: ["supabase/.temp/**", "worker-configuration.d.ts"] },
   baseConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],

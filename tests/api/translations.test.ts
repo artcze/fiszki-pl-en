@@ -4,7 +4,16 @@ import { TranslationServiceError } from "@/lib/translations";
 
 const mocks = vi.hoisted(() => ({
   translate: vi.fn(),
+  limit: vi.fn(),
   env: { baseUrl: "https://translate.example", apiKey: "secret-key" },
+}));
+
+vi.mock("cloudflare:workers", () => ({
+  env: {
+    TRANSLATION_RATE_LIMITER: {
+      limit: mocks.limit,
+    },
+  },
 }));
 
 vi.mock("astro:env/server", () => ({
@@ -44,6 +53,7 @@ function context(
 describe("translations API", () => {
   beforeEach(() => {
     mocks.translate.mockReset();
+    mocks.limit.mockReset().mockResolvedValue({ success: true });
     mocks.env.baseUrl = "https://translate.example";
     mocks.env.apiKey = "secret-key";
     vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -54,6 +64,7 @@ describe("translations API", () => {
 
     expect(response.status).toBe(401);
     expect(await response.json()).toMatchObject({ error: { code: "UNAUTHORIZED" } });
+    expect(mocks.limit).not.toHaveBeenCalled();
     expect(mocks.translate).not.toHaveBeenCalled();
   });
 
@@ -69,6 +80,7 @@ describe("translations API", () => {
     const response = await POST(requestContext);
     expect(response.status).toBe(400);
     expect(await response.json()).toMatchObject({ error: { code } });
+    expect(mocks.limit).not.toHaveBeenCalled();
     expect(mocks.translate).not.toHaveBeenCalled();
   });
 
@@ -77,6 +89,29 @@ describe("translations API", () => {
 
     expect(response.status).toBe(400);
     expect(await response.json()).toMatchObject({ error: { code: "INVALID_WORD" } });
+    expect(mocks.limit).not.toHaveBeenCalled();
+    expect(mocks.translate).not.toHaveBeenCalled();
+  });
+
+  it("uses the authenticated user id as the limiter key and allows the provider call", async () => {
+    mocks.translate.mockResolvedValue(["house"]);
+
+    const response = await POST(context({ word: "dom" }));
+
+    expect(response.status).toBe(200);
+    expect(mocks.limit).toHaveBeenCalledOnce();
+    expect(mocks.limit).toHaveBeenCalledWith({ key: "user-id" });
+    expect(mocks.translate).toHaveBeenCalledWith("dom");
+  });
+
+  it("returns 429 without calling the provider when the user exceeds the limit", async () => {
+    mocks.limit.mockResolvedValue({ success: false });
+
+    const response = await POST(context({ word: "dom" }));
+
+    expect(response.status).toBe(429);
+    expect(await response.json()).toMatchObject({ error: { code: "RATE_LIMITED" } });
+    expect(mocks.limit).toHaveBeenCalledWith({ key: "user-id" });
     expect(mocks.translate).not.toHaveBeenCalled();
   });
 

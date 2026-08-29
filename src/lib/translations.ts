@@ -30,6 +30,7 @@ type TranslationErrorCode =
   | "INVALID_JSON"
   | "INVALID_WORD"
   | "UNAUTHORIZED"
+  | "RATE_LIMITED"
   | "TRANSLATION_UNAVAILABLE"
   | "INTERNAL_ERROR";
 
@@ -94,6 +95,9 @@ export function normalizeTranslations(values: readonly unknown[]): string[] {
 
 export const unauthorizedTranslationResponse = () =>
   translationErrorResponse("UNAUTHORIZED", "Musisz się zalogować, aby tłumaczyć słowa.", 401);
+
+export const rateLimitedTranslationResponse = () =>
+  translationErrorResponse("RATE_LIMITED", "Wykorzystano limit tłumaczeń. Spróbuj ponownie za minutę.", 429);
 
 export const translationUnavailableResponse = () =>
   translationErrorResponse("TRANSLATION_UNAVAILABLE", "Nie udało się pobrać tłumaczenia. Spróbuj ponownie.", 502);
