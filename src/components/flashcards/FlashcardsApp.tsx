@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { createFlashcardsClient, getApiErrorMessage } from "@/lib/flashcards-client";
-import type { Flashcard } from "@/lib/flashcards";
+import { FLASHCARD_TEXT_MAX_LENGTH, type Flashcard } from "@/lib/flashcards";
+import { TRANSLATION_WORD_MAX_LENGTH } from "@/lib/translations";
 
 const client = createFlashcardsClient();
 
@@ -249,6 +250,7 @@ export default function FlashcardsApp() {
             <input
               id="polish-word"
               value={word}
+              maxLength={TRANSLATION_WORD_MAX_LENGTH}
               onChange={(event) => {
                 handleWordChange(event.target.value);
               }}
@@ -392,6 +394,7 @@ export default function FlashcardsApp() {
                         <input
                           id={`polish-${flashcard.id}`}
                           value={editPolish}
+                          maxLength={FLASHCARD_TEXT_MAX_LENGTH}
                           onChange={(event) => {
                             setEditPolish(event.target.value);
                             setCardError(null);
@@ -407,6 +410,7 @@ export default function FlashcardsApp() {
                         <input
                           id={`english-${flashcard.id}`}
                           value={editEnglish}
+                          maxLength={FLASHCARD_TEXT_MAX_LENGTH}
                           onChange={(event) => {
                             setEditEnglish(event.target.value);
                             setCardError(null);

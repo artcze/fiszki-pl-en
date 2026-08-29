@@ -4,6 +4,8 @@ export interface TranslationService {
   translatePolishWord(word: string): Promise<string[]>;
 }
 
+export const TRANSLATION_WORD_MAX_LENGTH = 100;
+
 export class TranslationServiceError extends Error {
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
@@ -17,6 +19,7 @@ export const translationInputSchema = z
       .string()
       .trim()
       .min(1)
+      .max(TRANSLATION_WORD_MAX_LENGTH)
       .refine((word) => !/\s/u.test(word)),
   })
   .readonly();

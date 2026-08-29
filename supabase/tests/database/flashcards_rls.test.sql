@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(13);
+select plan(15);
 
 insert into auth.users (
   id,
@@ -172,6 +172,26 @@ select throws_ok(
   '23514',
   'new row for relation "flashcards" violates check constraint "flashcards_english_not_blank"',
   'blank or whitespace-only English text is rejected'
+);
+
+select throws_ok(
+  $$
+    insert into public.flashcards (user_id, polish, english)
+    values ('11111111-1111-4111-8111-111111111111', repeat('p', 256), 'word');
+  $$,
+  '23514',
+  'new row for relation "flashcards" violates check constraint "flashcards_polish_max_length"',
+  'Polish text longer than 255 characters is rejected'
+);
+
+select throws_ok(
+  $$
+    insert into public.flashcards (user_id, polish, english)
+    values ('11111111-1111-4111-8111-111111111111', 'słowo', repeat('e', 256));
+  $$,
+  '23514',
+  'new row for relation "flashcards" violates check constraint "flashcards_english_max_length"',
+  'English text longer than 255 characters is rejected'
 );
 
 reset role;

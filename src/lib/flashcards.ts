@@ -1,11 +1,12 @@
 import { z } from "zod";
 
 export const FLASHCARD_COLUMNS = "id, polish, english, created_at, updated_at";
+export const FLASHCARD_TEXT_MAX_LENGTH = 255;
 
 export const flashcardInputSchema = z
   .strictObject({
-    polish: z.string().trim().min(1),
-    english: z.string().trim().min(1),
+    polish: z.string().trim().min(1).max(FLASHCARD_TEXT_MAX_LENGTH),
+    english: z.string().trim().min(1).max(FLASHCARD_TEXT_MAX_LENGTH),
   })
   .readonly();
 

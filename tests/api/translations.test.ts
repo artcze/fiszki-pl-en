@@ -72,6 +72,14 @@ describe("translations API", () => {
     expect(mocks.translate).not.toHaveBeenCalled();
   });
 
+  it("rejects words longer than 100 characters without calling LibreTranslate", async () => {
+    const response = await POST(context({ word: "a".repeat(101) }));
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ error: { code: "INVALID_WORD" } });
+    expect(mocks.translate).not.toHaveBeenCalled();
+  });
+
   it("returns normalized provider candidates and passes a trimmed word", async () => {
     mocks.translate.mockResolvedValue([" Castle ", "castle", "lock", "zipper", "fortress"]);
 

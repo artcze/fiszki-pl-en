@@ -147,6 +147,19 @@ describe("flashcards API", () => {
   });
 
   it.each([
+    ["POST polish", POST, jsonContext("POST", { polish: "p".repeat(256), english: "house" })],
+    ["POST english", POST, jsonContext("POST", { polish: "dom", english: "e".repeat(256) })],
+    ["PATCH polish", PATCH, jsonContext("PATCH", { polish: "p".repeat(256), english: "house" }, FLASHCARD_ID)],
+    ["PATCH english", PATCH, jsonContext("PATCH", { polish: "dom", english: "e".repeat(256) }, FLASHCARD_ID)],
+  ])("rejects %s longer than 255 characters", async (_case, handler, requestContext) => {
+    const response = await handler(requestContext);
+
+    expect(response.status).toBe(400);
+    expect(await json(response)).toMatchObject({ error: { code: "INVALID_FLASHCARD" } });
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
+  it.each([
     [PATCH, "PATCH"],
     [DELETE, "DELETE"],
   ])("rejects an invalid UUID for %s", async (handler, method) => {
