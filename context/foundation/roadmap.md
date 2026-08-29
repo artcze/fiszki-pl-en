@@ -93,7 +93,7 @@ Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` p
   - poprawić stare odnośniki w README i instrukcjach agentów,
   - wykonać świeży, pełny zestaw kontroli jakości przed zgłoszeniem,
   - zachować zakres MVP bez dodawania funkcji niepotrzebnych do certyfikacji.
-- **Weryfikacja:** pełny lokalny QA: lint, Astro check, 93 testy Vitest, build Cloudflare, 13 testów pgTAP, test E2E oraz `npm audit` bez podatności; GitHub Actions CI run #13 (`33250918523`) zakończony sukcesem.
+- **Weryfikacja:** pełny lokalny QA: lint, Astro check, 93 testy Vitest, build Cloudflare, 13 testów pgTAP, test E2E oraz `npm audit` bez podatności; GitHub Actions CI run #16 (`33254782139`) dla commita `acf7aec` zakończony sukcesem.
 - **Status:** zrealizowane.
 
 ## Przekazanie backlogu
