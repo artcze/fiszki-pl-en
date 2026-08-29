@@ -80,6 +80,8 @@ LIBRETRANSLATE_BASE_URL=
 LIBRETRANSLATE_API_KEY=
 ```
 
+`SUPABASE_KEY` musi zawierać klucz publikowalny Supabase (preferowany) albo starszy klucz `anon`, który jest jego niskouprawnionym odpowiednikiem. Nigdy nie umieszczaj w tej zmiennej klucza tajnego Supabase ani starszego klucza `service_role`. Klucze tajne i `service_role` są uprzywilejowane, omijają Row Level Security i nie są potrzebne do zwykłych żądań aplikacji.
+
 ## Lokalny Supabase
 
 Uruchom lokalny stack:
