@@ -171,23 +171,20 @@ Oczekiwanym zachowaniem jest kontrolowany błąd aplikacji bez utworzenia częś
 
 ## 8. Kontrole jakości
 
-Przed uznaniem zmiany za gotową powinny przejść:
+Przed uznaniem zmiany za gotową należy wykonać pełną sekwencję kontroli jakości zgodną z CI:
 
-1. lint:
+```bash
+npm ci
+npx astro sync
+npm run check
+npm run lint
+npm test
+npm run build
+npx supabase test db
+npm run test:e2e
+```
 
-   `npm run lint`
-
-2. testy Vitest:
-
-   `npm test`
-
-3. testy RLS / bazy danych przy dostępnej lokalnej instancji Supabase:
-
-   `npx supabase test db`
-
-4. production build:
-
-   `npm run build`
+Testy bazy danych i E2E wymagają dostępnej lokalnej instancji Supabase; E2E korzysta również ze środowiska testowego przygotowywanego przez workflow CI.
 
 ## 9. Powiązanie ryzyko → test
 

@@ -31,6 +31,7 @@ Run checks relevant to the change. For certification/readiness work, use the com
 ```bash
 npm ci
 npx astro sync
+npm run check
 npm run lint
 npm test
 npm run build

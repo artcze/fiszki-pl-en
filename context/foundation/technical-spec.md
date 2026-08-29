@@ -198,21 +198,22 @@ Usługa tłumaczeniowa jest zastępowana przez kontrolowany lokalny serwer testo
 
 ## 12. CI
 
-`.github/workflows/ci.yml` uruchamia dla operacji push i pull requestów do `main`:
+`.github/workflows/ci.yml` uruchamia dla operacji push i pull requestów do `main`.
 
-```text
-checkout
+Główna sekwencja kontroli jakości wykonywana w CI:
+
+```bash
 npm ci
-astro sync
-lint
-Vitest
-build
-Playwright Chromium install
-local Supabase
-Supabase DB tests
-E2E environment
-Playwright E2E
+npx astro sync
+npm run check
+npm run lint
+npm test
+npm run build
+npx supabase test db
+npm run test:e2e
 ```
+
+Workflow dodatkowo wykonuje checkout repozytorium, konfigurację Node.js, instalację Playwright Chromium, uruchomienie lokalnego Supabase oraz przygotowanie środowiska E2E.
 
 Nie należy uznawać samej obecności workflow za dowód udanego wykonania; przed zgłoszeniem certyfikacyjnym warto mieć świeże, udane wykonanie na aktualnym `main`.
 

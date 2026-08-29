@@ -19,7 +19,7 @@ Projekt jest aplikacją webową SSR. Warstwa serwerowa i routing są realizowane
 | Testy aplikacji | Vitest | Testy logiki i endpointów |
 | Testy bazy | pgTAP / testy bazy Supabase | Weryfikacja RLS i constraintów |
 | Testy E2E | Playwright | Główny przepływ użytkownika w przeglądarce |
-| CI | GitHub Actions | Lint, testy, build, testy bazy i E2E |
+| CI | GitHub Actions | Typecheck, lint, testy, build, testy bazy i E2E |
 | Środowisko uruchomieniowe | Cloudflare Workers | Środowisko uruchomieniowe aplikacji Astro SSR |
 
 ## 3. Kluczowe decyzje
@@ -72,6 +72,7 @@ Główna sekwencja kontroli jakości:
 ```bash
 npm ci
 npx astro sync
+npm run check
 npm run lint
 npm test
 npm run build

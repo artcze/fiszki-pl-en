@@ -19,6 +19,7 @@ Human-facing project/certification documentation is maintained in Polish. This a
 - `npm run dev` — start dev server
 - `npm run build` — production build (SSR via `@astrojs/cloudflare`)
 - `npm run preview` — preview production build
+- `npm run check` — Astro/TypeScript type check
 - `npm run lint` — ESLint
 - `npm run lint:fix` — auto-fix lint issues
 - `npm run format` — Prettier
@@ -70,17 +71,21 @@ Full server-side rendering (`output: "server"` in `astro.config.mjs`). Astro pag
 
 ## CI
 
-GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes and pull requests targeting `main` and performs:
+GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes and pull requests targeting `main`.
 
-1. dependency installation,
-2. Astro sync,
-3. lint,
-4. Vitest tests,
-5. production build,
-6. Playwright Chromium installation,
-7. local Supabase startup,
-8. database tests,
-9. E2E environment setup,
-10. Playwright E2E.
+Core CI-equivalent verification sequence:
+
+```bash
+npm ci
+npx astro sync
+npm run check
+npm run lint
+npm test
+npm run build
+npx supabase test db
+npm run test:e2e
+```
+
+The workflow additionally installs Playwright Chromium, starts local Supabase, and prepares the E2E environment before the database and E2E stages.
 
 Do not infer that CI is green merely from workflow configuration; verify the latest run when release/certification readiness depends on it.

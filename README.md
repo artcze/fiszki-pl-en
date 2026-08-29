@@ -147,6 +147,7 @@ Pełna sekwencja zbliżona do CI:
 ```bash
 npm ci
 npx astro sync
+npm run check
 npm run lint
 npm test
 npm run build
