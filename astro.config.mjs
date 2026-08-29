@@ -6,6 +6,8 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import cloudflare from "@astrojs/cloudflare";
 
+const isE2E = process.env.ASTRO_E2E === "true";
+
 // https://astro.build/config
 export default defineConfig({
   output: "server",
@@ -13,7 +15,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: cloudflare(),
+  adapter: isE2E ? undefined : cloudflare(),
   env: {
     schema: {
       SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),

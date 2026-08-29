@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/cloudflare": "^13.7.0",
-    "@astrojs/react": "^5.0.7",
-    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/cloudflare": "^14.2.5",
+    "@astrojs/react": "^6.0.4",
+    "@astrojs/sitemap": "^3.7.3",
     "@eslint/config-helpers": "^0.6.0",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/ssr": "^0.10.3",
@@ -27,7 +27,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.4.8",
+    "astro": "^7.2.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.14.0",
@@ -61,9 +61,6 @@
     "typescript-eslint": "^8.59.2",
     "vitest": "4.1.10",
     "wrangler": "^4.123.0"
-  },
-  "overrides": {
-    "vite": "^7.3.2"
   },
   "lint-staged": {
     "*.{ts,tsx,astro}": [
