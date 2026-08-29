@@ -1,5 +1,7 @@
 ---
 import Topbar from "@/components/Topbar.astro";
+
+const { user } = Astro.locals;
 ---
 
 <div class="bg-cosmic relative min-h-screen w-full overflow-hidden">
@@ -36,21 +38,32 @@ import Topbar from "@/components/Topbar.astro";
         Tłumacz polskie słowa na angielski i zapisuj wybrane tłumaczenia jako własne fiszki.
       </p>
 
-      <div class="flex flex-col gap-4 sm:flex-row">
-        <a
-          href="/auth/signin"
-          class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
-        >
-          Zaloguj się
-        </a>
+      {
+        user ? (
+          <a
+            href="/dashboard"
+            class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
+          >
+            Moje fiszki
+          </a>
+        ) : (
+          <div class="flex flex-col gap-4 sm:flex-row">
+            <a
+              href="/auth/signin"
+              class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
+            >
+              Zaloguj się
+            </a>
 
-        <a
-          href="/auth/signup"
-          class="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
-        >
-          Załóż konto
-        </a>
-      </div>
+            <a
+              href="/auth/signup"
+              class="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
+            >
+              Załóż konto
+            </a>
+          </div>
+        )
+      }
     </div>
 
     <div class="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-4 pb-24 sm:grid-cols-3">
@@ -71,7 +84,7 @@ import Topbar from "@/components/Topbar.astro";
       <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
         <h3 class="mb-2 text-lg font-semibold text-white">Pełna kontrola</h3>
         <p class="text-sm leading-relaxed text-blue-100/60">
-          Zapisane fiszki możesz przeglądać, edytować i usuwać na swoim dashboardzie.
+          Zapisane fiszki możesz przeglądać, edytować i usuwać w sekcji Moje fiszki.
         </p>
       </div>
     </div>
