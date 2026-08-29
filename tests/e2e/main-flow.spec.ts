@@ -15,11 +15,11 @@ test("sign in -> translate -> create -> list -> edit -> delete flashcard", async
   await page.goto("/auth/signup");
   await waitForHydration(page);
 
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByLabel("Confirm password").fill(password);
+  await page.getByLabel("E-mail").fill(email);
+  await page.getByLabel("Hasło", { exact: true }).fill(password);
+  await page.getByLabel("Potwierdź hasło").fill(password);
 
-  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByRole("button", { name: "Załóż konto" }).click();
   await expect(page).toHaveURL(/\/auth\/confirm-email$/);
 
   // Local Supabase has email confirmations disabled, so signup creates a session.
@@ -36,10 +36,10 @@ test("sign in -> translate -> create -> list -> edit -> delete flashcard", async
   await page.goto("/auth/signin");
   await waitForHydration(page);
 
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByLabel("E-mail").fill(email);
+  await page.getByLabel("Hasło", { exact: true }).fill(password);
 
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Zaloguj się" }).click();
 
   await expect(page).toHaveURL("/");
   const dashboardLink = page.getByRole("link", { name: "Moje fiszki" }).first();
