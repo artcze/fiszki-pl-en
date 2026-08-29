@@ -26,11 +26,11 @@ test("sign in -> translate -> create -> list -> edit -> delete flashcard", async
   // Sign out first so the test exercises the real sign-in flow.
   await page.goto("/");
 
-  await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
-  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page.getByRole("button", { name: "Wyloguj się" })).toBeVisible();
+  await page.getByRole("button", { name: "Wyloguj się" }).click();
 
   await expect(page).toHaveURL("/");
-  await expect(page.getByText("Not signed in")).toBeVisible();
+  await expect(page.getByText("Niezalogowany")).toBeVisible();
 
   // Sign in.
   await page.goto("/auth/signin");
@@ -42,9 +42,10 @@ test("sign in -> translate -> create -> list -> edit -> delete flashcard", async
   await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(page).toHaveURL("/");
-  await expect(page.getByRole("link", { name: "Dashboard" })).toBeVisible();
+  const dashboardLink = page.getByRole("link", { name: "Moje fiszki" }).first();
 
-  await page.getByRole("link", { name: "Dashboard" }).click();
+  await expect(dashboardLink).toBeVisible();
+  await dashboardLink.click();
 
   await expect(page).toHaveURL("/dashboard");
   await waitForHydration(page);
