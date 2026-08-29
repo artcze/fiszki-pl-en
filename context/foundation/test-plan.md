@@ -15,26 +15,26 @@ Testy są dobierane na podstawie ryzyka, a nie wyłącznie struktury kodu.
 
 ## 2. Skala ryzyka
 
-### Impact
+### Wpływ
 
-- High — naruszenie bezpieczeństwa lub podstawowej funkcji produktu.
-- Medium — główny flow działa niepoprawnie, ale nie prowadzi do naruszenia danych.
-- Low — ograniczony wpływ na użytkownika.
+- Wysoki — naruszenie bezpieczeństwa lub podstawowej funkcji produktu.
+- Średni — główny flow działa niepoprawnie, ale nie prowadzi do naruszenia danych.
+- Niski — ograniczony wpływ na użytkownika.
 
-### Likelihood
+### Prawdopodobieństwo
 
-- High — błąd może łatwo wystąpić w normalnym użyciu.
-- Medium — wymaga określonej sytuacji lub kombinacji warunków.
-- Low — sytuacja rzadka lub wymagająca nietypowego działania.
+- Wysoki — błąd może łatwo wystąpić w normalnym użyciu.
+- Średni — wymaga określonej sytuacji lub kombinacji warunków.
+- Niski — sytuacja rzadka lub wymagająca nietypowego działania.
 
 ## 3. Mapa ryzyk
 
-| ID | Ryzyko | Impact | Likelihood | Priorytet |
+| ID | Ryzyko | Wpływ | Prawdopodobieństwo | Priorytet |
 | --- | --- | --- | --- | --- |
-| R-01 | Zalogowany użytkownik może uzyskać dostęp do fiszki należącej do innego użytkownika | High | Medium | Critical |
-| R-02 | Usługa tłumaczeń zwraca duplikaty, puste wartości lub więcej niż trzy wyniki | Medium | Medium | High |
-| R-03 | Nieprawidłowe dane wejściowe prowadzą do zapisania błędnej lub niekompletnej fiszki | Medium | Medium | High |
-| R-04 | Awaria lub błędna odpowiedź LibreTranslate powoduje niekontrolowany błąd aplikacji | Medium | Medium | High |
+| R-01 | Zalogowany użytkownik może uzyskać dostęp do fiszki należącej do innego użytkownika | Wysoki | Średnie | Krytyczny |
+| R-02 | Usługa tłumaczeń zwraca duplikaty, puste wartości lub więcej niż trzy wyniki | Średni | Średnie | Wysoki |
+| R-03 | Nieprawidłowe dane wejściowe prowadzą do zapisania błędnej lub niekompletnej fiszki | Średni | Średnie | Wysoki |
+| R-04 | Awaria lub błędna odpowiedź LibreTranslate powoduje niekontrolowany błąd aplikacji | Średni | Średnie | Wysoki |
 
 ## 4. R-01 — naruszenie izolacji danych użytkowników
 
@@ -89,7 +89,7 @@ Sprawdza między innymi:
 
 - odrzucenie niezalogowanych żądań,
 - pobieranie fiszek z filtrem `user_id`,
-- tworzenie fiszki z ownership wyprowadzonym z sesji,
+- tworzenie fiszki z własnością wyprowadzoną z sesji,
 - aktualizację z filtrem `id + user_id`,
 - usunięcie z filtrem `id + user_id`.
 
@@ -98,14 +98,14 @@ Sprawdza między innymi:
 R-01 uznajemy za pokryte, gdy:
 
 1. testy RLS dla dwóch użytkowników przechodzą,
-2. testy API potwierdzają session-derived ownership,
+2. testy API potwierdzają własność wyprowadzana z sesji,
 3. żadna operacja CRUD nie przyjmuje `user_id` od klienta.
 
 ## 5. R-02 — błędna normalizacja tłumaczeń
 
 ### Ryzyko
 
-Provider może zwrócić:
+Usługa tłumaczeniowa może zwrócić:
 
 - puste wartości,
 - powtarzające się tłumaczenia,
@@ -136,9 +136,9 @@ Klient może wysłać:
 - brakujące pola,
 - błędne typy,
 - puste wartości,
-- whitespace-only values,
+- wartości zawierające wyłącznie białe znaki,
 - dodatkowe pole `user_id`,
-- malformed JSON.
+- niepoprawny JSON.
 
 ### Testy adresujące ryzyko
 
@@ -150,15 +150,15 @@ oraz:
 
 Walidacja występuje zarówno na poziomie API, jak i constraintów PostgreSQL.
 
-## 7. R-04 — awaria providera tłumaczeń
+## 7. R-04 — awaria usługi tłumaczeniowej
 
 ### Ryzyko
 
 LibreTranslate może:
 
-- zwrócić HTTP error,
-- przekroczyć timeout,
-- zwrócić malformed JSON,
+- zwrócić błąd HTTP,
+- przekroczyć przekroczenie limitu czasu,
+- zwrócić niepoprawny JSON,
 - zwrócić niepoprawny format odpowiedzi,
 - zwrócić brak użytecznych tłumaczeń.
 
@@ -169,7 +169,7 @@ LibreTranslate może:
 
 Oczekiwanym zachowaniem jest kontrolowany błąd aplikacji bez utworzenia częściowego rekordu fiszki.
 
-## 8. Quality gates
+## 8. Kontrole jakości
 
 Przed uznaniem zmiany za gotową powinny przejść:
 
@@ -189,15 +189,15 @@ Przed uznaniem zmiany za gotową powinny przejść:
 
    `npm run build`
 
-## 9. Risk-to-test traceability
+## 9. Powiązanie ryzyko → test
 
-| Risk | Test |
+| Ryzyko | Test |
 | --- | --- |
-| R-01 Cross-user data access | `supabase/tests/database/flashcards_rls.test.sql` |
-| R-01 API ownership bypass | `tests/api/flashcards.test.ts` |
-| R-02 Invalid translation normalization | `tests/lib/translations.test.ts` |
-| R-03 Invalid flashcard persistence | `tests/api/flashcards.test.ts`, `supabase/tests/database/flashcards_rls.test.sql` |
-| R-04 Translation provider failure | `tests/lib/libretranslate.test.ts`, `tests/api/translations.test.ts` |
+| R-01 Dostęp do danych innego użytkownika | `supabase/tests/database/flashcards_rls.test.sql` |
+| R-01 Ominięcie kontroli własności w API | `tests/api/flashcards.test.ts` |
+| R-02 Nieprawidłowa normalizacja tłumaczeń | `tests/lib/translations.test.ts` |
+| R-03 Zapis nieprawidłowej fiszki | `tests/api/flashcards.test.ts`, `supabase/tests/database/flashcards_rls.test.sql` |
+| R-04 Awaria usługi tłumaczeniowej | `tests/lib/libretranslate.test.ts`, `tests/api/translations.test.ts` |
 
 ## 10. Ryzyko wybrane jako wymaganie MVP / 10xBuilder
 
