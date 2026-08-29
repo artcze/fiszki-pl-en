@@ -20,7 +20,7 @@ Użytkownik ma szybko przejść od jednego polskiego słowa do prywatnej fiszki 
 | S-03 | `edit-and-delete-flashcards` | Użytkownik może edytować i usuwać własne fiszki | S-02 | zrealizowane |
 | S-04 | `ownership-risk-coverage` | Dostęp między kontami jest blokowany i testowany na poziomie bazy oraz API | F-01, S-02 | zrealizowane |
 | S-05 | `deterministic-main-flow-e2e` | Główny przepływ jest pokryty deterministycznym testem E2E | S-01, S-02, S-03 | zrealizowane |
-| S-06 | `certification-hardening` | Dokumentacja i dowody wykonania kontroli jakości są gotowe do zgłoszenia | S-01…S-05 | w toku |
+| S-06 | `certification-hardening` | Dokumentacja i dowody wykonania kontroli jakości są gotowe do zgłoszenia | S-01…S-05 | zrealizowane |
 
 ## Punkt wyjścia (Baseline)
 
@@ -93,16 +93,12 @@ Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` p
   - poprawić stare odnośniki w README i instrukcjach agentów,
   - wykonać świeży, pełny zestaw kontroli jakości przed zgłoszeniem,
   - zachować zakres MVP bez dodawania funkcji niepotrzebnych do certyfikacji.
-- **Status:** w toku.
+- **Weryfikacja:** pełny lokalny QA: lint, Astro check, 93 testy Vitest, build Cloudflare, 13 testów pgTAP, test E2E oraz `npm audit` bez podatności; GitHub Actions CI run #13 (`33250918523`) zakończony sukcesem.
+- **Status:** zrealizowane.
 
 ## Przekazanie backlogu
 
-Najbliższe prace dotyczą wyłącznie przygotowania certyfikacyjnego:
-
-1. zakończyć konsolidację dokumentacji,
-2. sprawdzić, czy README prowadzi do aktualnych artefaktów,
-3. uruchomić pełny zestaw kontroli jakości na aktualnym `main`,
-4. zebrać czytelne dowody do formularza i ewentualnych zrzutów ekranu.
+Prace implementacyjne i hardening wymagany przed zgłoszeniem zostały zakończone. Pozostaje przygotowanie Evidence Packu, ewentualnych zrzutów ekranu oraz weryfikacja wymagań formularza zgłoszeniowego.
 
 Nie ma obecnie potrzeby dodawania nowej funkcjonalności produktu, aby spełnić minimalne wymagania techniczne 10xBuilder.
 
@@ -129,4 +125,4 @@ Poza zakresem MVP pozostają:
 
 ## Zrealizowane (Done)
 
-Zrealizowano fundament uwierzytelniania i trwałości danych oraz przekroje funkcjonalne S-01–S-05. Kod zawiera pełny CRUD zasobu `flashcards`, logikę normalizacji tłumaczeń, kontrolę własności i RLS, test zmapowany na R-01 oraz deterministyczny test E2E głównego przepływu.
+Zrealizowano fundament uwierzytelniania i trwałości danych oraz przekroje funkcjonalne S-01–S-06. Kod zawiera pełny CRUD zasobu `flashcards`, logikę normalizacji tłumaczeń, kontrolę własności i RLS, test zmapowany na R-01 oraz deterministyczny test E2E głównego przepływu.
