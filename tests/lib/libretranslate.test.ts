@@ -88,7 +88,7 @@ describe("LibreTranslateService", () => {
 
   it("aborts after the named timeout", async () => {
     vi.useFakeTimers();
-    const fetchMock = vi.fn((_url: string, init?: RequestInit) => {
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
       return new Promise<Response>((_resolve, reject) => {
         init?.signal?.addEventListener("abort", () => {
           reject(new DOMException("Aborted", "AbortError"));
