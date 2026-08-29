@@ -1,4 +1,4 @@
-# Test Plan — Fiszki PL-EN MVP
+# Plan testów — Fiszki PL-EN MVP
 
 ## 1. Cel
 

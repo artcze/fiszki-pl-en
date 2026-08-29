@@ -2,15 +2,15 @@
 
 > Dokument porządkuje aktualny zakres MVP i pozostałe prace przed zgłoszeniem. Nie jest historycznym logiem implementacji i nie rekonstruuje artefaktów planistycznych, które wcześniej nie istniały.
 
-## Podsumowanie wizji (Vision recap)
+## Podsumowanie wizji
 
 Użytkownik ma szybko przejść od jednego polskiego słowa do prywatnej fiszki polski → angielski: zalogować się, pobrać ograniczoną liczbę propozycji, wybrać właściwe znaczenie, zapisać fiszkę i później nią zarządzać.
 
-## Główny cel (North star)
+## Główny cel
 
 **Zalogowany użytkownik może wpisać polskie słowo, otrzymać 1–3 unikalne propozycje tłumaczenia, wybrać jedną i zapisać ją jako własną fiszkę, której inny użytkownik nie może odczytać ani zmodyfikować.**
 
-## Przegląd (At a glance)
+## Przegląd
 
 | ID | Identyfikator zmiany | Rezultat | Zależności | Status |
 |---|---|---|---|---|
@@ -22,13 +22,13 @@ Użytkownik ma szybko przejść od jednego polskiego słowa do prywatnej fiszki 
 | S-05 | `deterministic-main-flow-e2e` | Główny przepływ jest pokryty deterministycznym testem E2E | S-01, S-02, S-03 | zrealizowane |
 | S-06 | `certification-hardening` | Dokumentacja i dowody wykonania kontroli jakości są gotowe do zgłoszenia | S-01…S-05 | zrealizowane |
 
-## Punkt wyjścia (Baseline)
+## Punkt wyjścia
 
 Aktualny projekt zawiera Astro SSR, React, Supabase Auth/PostgreSQL/RLS, LibreTranslate, Zod, Vitest, pgTAP/testy bazy Supabase, Playwright i GitHub Actions.
 
 Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` przez `user_id`.
 
-## Fundamenty (Foundations)
+## Fundamenty
 
 ### F-01: `auth-and-persistence`
 
@@ -37,7 +37,7 @@ Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` p
 - **Dowody:** middleware Supabase, endpointy uwierzytelniania, migracja `flashcards`, polityki RLS.
 - **Status:** zrealizowane.
 
-## Przekroje funkcjonalne (Slices)
+## Przekroje funkcjonalne
 
 ### S-01: `translate-one-word`
 
@@ -107,7 +107,7 @@ Nie ma obecnie potrzeby dodawania nowej funkcjonalności produktu, aby spełnić
 - Czy formularz zgłoszeniowy będzie wymagał dodatkowego zrzutu ekranu konkretnego elementu mimo publicznego repozytorium?
 - Czy wykonać dodatkową kontrolę wdrożenia? Nie jest ona wymagana do pięciopunktowego audytu technicznego, ale można ją potraktować jako osobną kontrolę gotowości do zgłoszenia.
 
-## Odłożone (Parked)
+## Odłożone
 
 Poza zakresem MVP pozostają:
 
@@ -123,6 +123,6 @@ Poza zakresem MVP pozostają:
 - współdzielenie fiszek,
 - natywna aplikacja mobilna.
 
-## Zrealizowane (Done)
+## Zrealizowane
 
 Zrealizowano fundament uwierzytelniania i trwałości danych oraz przekroje funkcjonalne S-01–S-06. Kod zawiera pełny CRUD zasobu `flashcards`, logikę normalizacji tłumaczeń, kontrolę własności i RLS, test zmapowany na R-01 oraz deterministyczny test E2E głównego przepływu.

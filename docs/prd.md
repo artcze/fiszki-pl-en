@@ -1,6 +1,6 @@
 # PRD przeniesiony
 
-Kanoniczny Product Requirements Document znajduje się w:
+Kanoniczny dokument wymagań produktowych (PRD) znajduje się w:
 
 [`context/foundation/prd.md`](../context/foundation/prd.md)
 
