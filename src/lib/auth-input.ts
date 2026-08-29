@@ -9,10 +9,13 @@ const signInSchema = z.object({
   password: z.string().min(1),
 });
 
-const signUpSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(6),
-});
+const signUpSchema = z
+  .object({
+    email: emailSchema,
+    password: z.string().min(6),
+    confirmPassword: z.string(),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword);
 
 export interface AuthCredentials {
   email: string;
@@ -27,8 +30,17 @@ export function parseAuthCredentials(form: FormData, mode: "signin" | "signup"):
     return null;
   }
 
-  const schema = mode === "signup" ? signUpSchema : signInSchema;
-  const result = schema.safeParse({ email, password });
+  if (mode === "signin") {
+    const result = signInSchema.safeParse({ email, password });
+    return result.success ? result.data : null;
+  }
 
-  return result.success ? result.data : null;
+  const confirmPassword = form.get("confirmPassword");
+  if (typeof confirmPassword !== "string") {
+    return null;
+  }
+
+  const result = signUpSchema.safeParse({ email, password, confirmPassword });
+
+  return result.success ? { email: result.data.email, password: result.data.password } : null;
 }

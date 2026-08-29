@@ -9,10 +9,14 @@ vi.mock("@/lib/supabase", () => ({ createClient: vi.fn() }));
 type ApiContext = Parameters<APIRoute>[0];
 
 function context(path: string): ApiContext {
+  const password = "Secure-pass-123!";
   const body = new URLSearchParams({
     email: "user@example.test",
-    password: "Secure-pass-123!",
+    password,
   });
+  if (path === "/api/auth/signup") {
+    body.set("confirmPassword", password);
+  }
 
   return {
     request: new Request(`http://localhost${path}`, {
@@ -78,8 +82,37 @@ describe("auth API", () => {
 
   it.each([
     ["missing password", new URLSearchParams({ email: "user@example.test" })],
-    ["short password", new URLSearchParams({ email: "user@example.test", password: "12345" })],
+    [
+      "short password",
+      new URLSearchParams({ email: "user@example.test", password: "12345", confirmPassword: "12345" }),
+    ],
   ])("rejects invalid sign-up input: %s", async (_case, body) => {
+    const requestContext = context("/api/auth/signup");
+    requestContext.request = new Request("http://localhost/api/auth/signup", {
+      method: "POST",
+      body,
+    });
+
+    const response = await signUp(requestContext);
+
+    expect(response.status).toBe(302);
+    expect(redirectError(response)).toBe(
+      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 6 znaków.",
+    );
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "mismatched confirmation",
+      new URLSearchParams({
+        email: "user@example.test",
+        password: "Secure-pass-123!",
+        confirmPassword: "Different-pass-123!",
+      }),
+    ],
+    ["missing confirmation", new URLSearchParams({ email: "user@example.test", password: "Secure-pass-123!" })],
+  ])("rejects sign-up input with %s before creating a Supabase client", async (_case, body) => {
     const requestContext = context("/api/auth/signup");
     requestContext.request = new Request("http://localhost/api/auth/signup", {
       method: "POST",
@@ -159,7 +192,7 @@ describe("auth API", () => {
     expect(response.headers.get("Location")).not.toContain("SECRET_PROVIDER_MESSAGE");
   });
 
-  it("redirects successful sign up to confirmation", async () => {
+  it("allows matching password confirmation and passes only credentials to sign up", async () => {
     const mock = authClient("signUp", null);
     vi.mocked(createClient).mockReturnValue(mock.client as never);
 
