@@ -9,7 +9,7 @@ vi.mock("@/lib/supabase", () => ({ createClient: vi.fn() }));
 type ApiContext = Parameters<APIRoute>[0];
 
 function context(path: string): ApiContext {
-  const password = "Secure-pass-123!";
+  const password = path === "/api/auth/signup" ? "12345678" : "Secure-pass-123!";
   const body = new URLSearchParams({
     email: "user@example.test",
     password,
@@ -84,7 +84,7 @@ describe("auth API", () => {
     ["missing password", new URLSearchParams({ email: "user@example.test" })],
     [
       "short password",
-      new URLSearchParams({ email: "user@example.test", password: "12345", confirmPassword: "12345" }),
+      new URLSearchParams({ email: "user@example.test", password: "1234567", confirmPassword: "1234567" }),
     ],
   ])("rejects invalid sign-up input: %s", async (_case, body) => {
     const requestContext = context("/api/auth/signup");
@@ -97,7 +97,7 @@ describe("auth API", () => {
 
     expect(response.status).toBe(302);
     expect(redirectError(response)).toBe(
-      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 6 znaków.",
+      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 8 znaków.",
     );
     expect(createClient).not.toHaveBeenCalled();
   });
@@ -123,7 +123,7 @@ describe("auth API", () => {
 
     expect(response.status).toBe(302);
     expect(redirectError(response)).toBe(
-      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 6 znaków.",
+      "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 8 znaków.",
     );
     expect(createClient).not.toHaveBeenCalled();
   });
@@ -202,7 +202,7 @@ describe("auth API", () => {
     expect(response.headers.get("Location")).toBe("/auth/confirm-email");
     expect(mock.call).toHaveBeenCalledWith({
       email: "user@example.test",
-      password: "Secure-pass-123!",
+      password: "12345678",
     });
   });
 });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MIN_PASSWORD_LENGTH } from "@/lib/auth-policy";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -12,7 +13,7 @@ const signInSchema = z.object({
 const signUpSchema = z
   .object({
     email: emailSchema,
-    password: z.string().min(6),
+    password: z.string().min(MIN_PASSWORD_LENGTH),
     confirmPassword: z.string(),
   })
   .refine(({ password, confirmPassword }) => password === confirmPassword);

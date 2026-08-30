@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { parseAuthCredentials } from "@/lib/auth-input";
+import { MIN_PASSWORD_LENGTH } from "@/lib/auth-policy";
 
 const AUTH_UNAVAILABLE = "Usługa uwierzytelniania jest chwilowo niedostępna. Spróbuj ponownie później.";
 const SIGNUP_FAILED = "Nie udało się utworzyć konta. Sprawdź dane i spróbuj ponownie.";
@@ -14,7 +15,10 @@ export const POST: APIRoute = async (context) => {
   const credentials = parseAuthCredentials(form, "signup");
 
   if (!credentials) {
-    return errorRedirect(context, "Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej 6 znaków.");
+    return errorRedirect(
+      context,
+      `Podaj prawidłowy adres e-mail oraz hasło składające się z co najmniej ${MIN_PASSWORD_LENGTH} znaków.`,
+    );
   }
 
   const supabase = createClient(context.request.headers, context.cookies);
