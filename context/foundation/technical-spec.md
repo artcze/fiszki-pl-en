@@ -58,15 +58,17 @@ Przykładowa odpowiedź `200`:
 
 Zasady:
 
-- wejście zawiera jedno niepuste słowo bez białych znaków rozdzielających kilka tokenów,
+- wejście ma maksymalnie 100 znaków i zawiera dokładnie jedno niepuste słowo bez białych znaków rozdzielających kilka tokenów,
 - język źródłowy to `pl`, a docelowy `en`,
 - odpowiedź usługi tłumaczeniowej jest normalizowana,
 - puste wartości i duplikaty są usuwane,
 - wynik ma maksymalnie trzy elementy,
 - zero użytecznych wyników jest traktowane jako błąd tłumaczenia,
+- natywny limiter Cloudflare dopuszcza dla uwierzytelnionego użytkownika 30 żądań tłumaczenia na 60 sekund, używając aktualnego `user.id` jako klucza,
+- przekroczenie limitu zwraca HTTP `429` z kodem aplikacyjnym `RATE_LIMITED`,
 - endpoint nie zapisuje fiszki.
 
-Oczekiwane klasy odpowiedzi błędów obejmują `400`, `401`, `502` i `500` z kontrolowanymi kodami aplikacyjnymi.
+Oczekiwane klasy odpowiedzi błędów obejmują `400`, `401`, `429`, `502` i `500` z kontrolowanymi kodami aplikacyjnymi.
 
 ### 4.2 `GET /api/flashcards`
 
@@ -111,24 +113,28 @@ Błędy sieci, przekroczenia limitu czasu, nieprawidłowej odpowiedzi lub błęd
 
 Tabela `public.flashcards` zawiera:
 
-| Kolumna | Typ | Znaczenie |
-|---|---|---|
-| `id` | `uuid` | klucz główny generowany przez bazę |
-| `user_id` | `uuid` | właściciel; FK do `auth.users(id)` |
-| `polish` | `text` | niepuste polskie słowo |
-| `english` | `text` | niepuste angielskie tłumaczenie |
-| `created_at` | `timestamptz` | czas utworzenia |
-| `updated_at` | `timestamptz` | czas ostatniej aktualizacji |
+| Kolumna      | Typ           | Znaczenie                                               |
+| ------------ | ------------- | ------------------------------------------------------- |
+| `id`         | `uuid`        | klucz główny generowany przez bazę                      |
+| `user_id`    | `uuid`        | właściciel; FK do `auth.users(id)`                      |
+| `polish`     | `text`        | niepuste polskie słowo, maksymalnie 255 znaków          |
+| `english`    | `text`        | niepuste angielskie tłumaczenie, maksymalnie 255 znaków |
+| `created_at` | `timestamptz` | czas utworzenia                                         |
+| `updated_at` | `timestamptz` | czas ostatniej aktualizacji                             |
 
 Baza ma:
 
-- ograniczenia CHECK blokujące wartości puste lub zawierające wyłącznie białe znaki dla `polish` i `english`,
+- ograniczenia CHECK blokujące wartości puste lub zawierające wyłącznie białe znaki oraz wartości dłuższe niż 255 znaków dla `polish` i `english`,
 - indeks `(user_id, created_at desc)`,
 - wyzwalacz aktualizujący `updated_at`,
 - Row Level Security.
 
 ## 7. Uwierzytelnianie i autoryzacja
 
+- rejestracja wymaga hasła o długości co najmniej 8 znaków oraz zgodnego potwierdzenia hasła,
+- `confirmPassword` jest walidowane po stronie serwera i musi być zgodne z `password`,
+- do `Supabase signUp` przekazywane są wyłącznie `email` i `password`; `confirmPassword` nie jest przekazywane dostawcy,
+- oczekiwane błędy uwierzytelniania i dostawcy są zwracane jako oczyszczone komunikaty przeznaczone dla użytkownika,
 - sesja jest obsługiwana przez Klient Supabase SSR i cookies,
 - middleware odczytuje aktualnego użytkownika i zapisuje go w `context.locals.user`,
 - `/dashboard` wymaga zalogowania,
@@ -149,10 +155,11 @@ Rola `anon` nie ma dostępu do tabeli `flashcards`.
 
 ## 8. Walidacja
 
-- JSON i typy są walidowane na granicy endpointu,
-- fiszki wymagają niepustych `polish` i `english`,
+- ścisła walidacja JSON, typów i dozwolonych pól pozostaje na granicy każdego endpointu,
+- słowo przekazywane do tłumaczenia ma maksymalnie 100 znaków i musi być dokładnie jednym niepustym słowem,
+- fiszki wymagają niepustych `polish` i `english`, maksymalnie po 255 znaków na każdą stronę,
+- trwałe ograniczenia CHECK w PostgreSQL odpowiadają regułom niepustych wartości i limitom 255 znaków dla obu stron fiszki,
 - identyfikator fiszki jest walidowany przed zapytaniem do bazy,
-- endpoint tłumaczeń wymaga jednego niepustego słowa,
 - baza stanowi drugą linię ochrony dla trwałych danych.
 
 ## 9. Obsługa błędów

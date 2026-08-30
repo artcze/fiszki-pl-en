@@ -12,15 +12,15 @@ Użytkownik ma szybko przejść od jednego polskiego słowa do prywatnej fiszki 
 
 ## Przegląd
 
-| ID | Identyfikator zmiany | Rezultat | Zależności | Status |
-|---|---|---|---|---|
-| F-01 | `auth-and-persistence` | Sesja użytkownika i trwała tabela fiszek z RLS | — | zrealizowane |
-| S-01 | `translate-one-word` | Użytkownik otrzymuje 1–3 znormalizowane propozycje tłumaczenia | F-01 | zrealizowane |
-| S-02 | `create-and-list-flashcards` | Użytkownik zapisuje wybraną propozycję i widzi własne fiszki | F-01, S-01 | zrealizowane |
-| S-03 | `edit-and-delete-flashcards` | Użytkownik może edytować i usuwać własne fiszki | S-02 | zrealizowane |
-| S-04 | `ownership-risk-coverage` | Dostęp między kontami jest blokowany i testowany na poziomie bazy oraz API | F-01, S-02 | zrealizowane |
-| S-05 | `deterministic-main-flow-e2e` | Główny przepływ jest pokryty deterministycznym testem E2E | S-01, S-02, S-03 | zrealizowane |
-| S-06 | `certification-hardening` | Dokumentacja i dowody wykonania kontroli jakości są gotowe do zgłoszenia | S-01…S-05 | zrealizowane |
+| ID   | Identyfikator zmiany          | Rezultat                                                                   | Zależności       | Status       |
+| ---- | ----------------------------- | -------------------------------------------------------------------------- | ---------------- | ------------ |
+| F-01 | `auth-and-persistence`        | Sesja użytkownika i trwała tabela fiszek z RLS                             | —                | zrealizowane |
+| S-01 | `translate-one-word`          | Użytkownik otrzymuje 1–3 znormalizowane propozycje tłumaczenia             | F-01             | zrealizowane |
+| S-02 | `create-and-list-flashcards`  | Użytkownik zapisuje wybraną propozycję i widzi własne fiszki               | F-01, S-01       | zrealizowane |
+| S-03 | `edit-and-delete-flashcards`  | Użytkownik może edytować i usuwać własne fiszki                            | S-02             | zrealizowane |
+| S-04 | `ownership-risk-coverage`     | Dostęp między kontami jest blokowany i testowany na poziomie bazy oraz API | F-01, S-02       | zrealizowane |
+| S-05 | `deterministic-main-flow-e2e` | Główny przepływ jest pokryty deterministycznym testem E2E                  | S-01, S-02, S-03 | zrealizowane |
+| S-06 | `certification-hardening`     | Dokumentacja i dowody wykonania kontroli jakości są gotowe do zgłoszenia   | S-01…S-05        | zrealizowane |
 
 ## Punkt wyjścia
 
@@ -93,7 +93,7 @@ Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` p
   - poprawić stare odnośniki w README i instrukcjach agentów,
   - wykonać świeży, pełny zestaw kontroli jakości przed zgłoszeniem,
   - zachować zakres MVP bez dodawania funkcji niepotrzebnych do certyfikacji.
-- **Weryfikacja:** pełny lokalny QA: lint, Astro check, 93 testy Vitest, build Cloudflare, 13 testów pgTAP, test E2E oraz `npm audit` bez podatności; GitHub Actions CI run #16 (`33254782139`) dla commita `acf7aec` zakończony sukcesem.
+- **Weryfikacja:** ostatni zweryfikowany pełny dowód QA na 2026-08-30 obejmuje Astro check (49 plików, 0 błędów, 0 ostrzeżeń i 0 wskazówek), 102 zaliczone testy Vitest, 15 zaliczonych testów pgTAP / bazy Supabase, zaliczony test E2E oraz audyt zależności `npm ci` z wynikiem 0 podatności. GitHub Actions CI run #24 (`33282374294`) dla commita `4ff90c2` zakończył się sukcesem.
 - **Status:** zrealizowane.
 
 ## Przekazanie backlogu
