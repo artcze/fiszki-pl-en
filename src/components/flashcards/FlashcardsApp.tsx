@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { createFlashcardsClient, getApiErrorMessage } from "@/lib/flashcards-client";
-import { FLASHCARD_TEXT_MAX_LENGTH, type Flashcard } from "@/lib/flashcards";
+import { FLASHCARD_TEXT_MAX_LENGTH, isSinglePolishWord, type Flashcard } from "@/lib/flashcards";
 import { TRANSLATION_WORD_MAX_LENGTH } from "@/lib/translations";
 
 const client = createFlashcardsClient();
@@ -180,8 +180,8 @@ export default function FlashcardsApp() {
 
     const polish = editPolish.trim();
     const english = editEnglish.trim();
-    if (!polish || !english) {
-      setCardError({ id, message: "Podaj niepuste polskie słowo i angielskie tłumaczenie." });
+    if (!isSinglePolishWord(polish) || !english) {
+      setCardError({ id, message: "Podaj jedno polskie słowo i niepuste angielskie tłumaczenie." });
       return;
     }
 

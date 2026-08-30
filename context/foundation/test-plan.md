@@ -137,6 +137,7 @@ Klient może wysłać:
 - błędne typy,
 - puste wartości,
 - wartości zawierające wyłącznie białe znaki,
+- polską stronę zawierającą kilka słów lub inny wewnętrzny separator whitespace,
 - dodatkowe pole `user_id`,
 - niepoprawny JSON.
 
@@ -148,7 +149,7 @@ oraz:
 
 `supabase/tests/database/flashcards_rls.test.sql`
 
-Walidacja występuje zarówno na poziomie API, jak i constraintów PostgreSQL.
+Testy API sprawdzają odrzucenie wielowyrazowego `polish` przez `POST` i `PATCH` przed wywołaniem Supabase, w tym separator inny niż spacja, oraz zachowanie przycinania otaczających białych znaków. Testy bazy sprawdzają constraint `flashcards_polish_single_word` dla operacji `INSERT` i `UPDATE`. Walidacja występuje zarówno na poziomie API, jak i constraintów PostgreSQL; wielowyrazowe tłumaczenie `english` pozostaje prawidłowe.
 
 ## 7. R-04 — awaria usługi tłumaczeniowej
 

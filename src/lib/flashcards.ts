@@ -3,9 +3,14 @@ import { z } from "zod";
 export const FLASHCARD_COLUMNS = "id, polish, english, created_at, updated_at";
 export const FLASHCARD_TEXT_MAX_LENGTH = 255;
 
+export function isSinglePolishWord(value: string): boolean {
+  const trimmedValue = value.trim();
+  return trimmedValue.length > 0 && !/\s/u.test(trimmedValue);
+}
+
 export const flashcardInputSchema = z
   .strictObject({
-    polish: z.string().trim().min(1).max(FLASHCARD_TEXT_MAX_LENGTH),
+    polish: z.string().trim().min(1).max(FLASHCARD_TEXT_MAX_LENGTH).refine(isSinglePolishWord),
     english: z.string().trim().min(1).max(FLASHCARD_TEXT_MAX_LENGTH),
   })
   .readonly();
@@ -60,7 +65,7 @@ export async function parseFlashcardInput(
   if (!result.success) {
     return {
       success: false,
-      response: errorResponse("INVALID_FLASHCARD", "Podaj niepuste polskie słowo i angielskie tłumaczenie.", 400),
+      response: errorResponse("INVALID_FLASHCARD", "Podaj jedno polskie słowo i niepuste angielskie tłumaczenie.", 400),
     };
   }
 

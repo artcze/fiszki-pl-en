@@ -76,11 +76,11 @@ Wymaga uwierzytelnienia. Pobiera wyłącznie rekordy z `user_id` równym identyf
 
 ### 4.3 `POST /api/flashcards`
 
-Wymaga uwierzytelnienia. Waliduje `polish` i `english`, a następnie zapisuje dokładnie jedną fiszkę. `user_id` pochodzi wyłącznie z sesji.
+Wymaga uwierzytelnienia. Waliduje, że `polish` zawiera dokładnie jedno niepuste słowo, a `english` niepuste tłumaczenie, które może zawierać spacje. Oba pola mają maksymalnie 255 znaków. Następnie zapisuje dokładnie jedną fiszkę. `user_id` pochodzi wyłącznie z sesji.
 
 ### 4.4 `PATCH /api/flashcards/[id]`
 
-Wymaga uwierzytelnienia. Aktualizuje tylko rekord spełniający jednocześnie warunki `id = <id>` oraz `user_id = currentUser.id`. Brak dostępnego rekordu zwraca `404` bez ujawniania, czy wskazane ID należy do innego użytkownika.
+Wymaga uwierzytelnienia i stosuje do `polish` oraz `english` te same reguły walidacji co endpoint tworzenia. Aktualizuje tylko rekord spełniający jednocześnie warunki `id = <id>` oraz `user_id = currentUser.id`. Brak dostępnego rekordu zwraca `404` bez ujawniania, czy wskazane ID należy do innego użytkownika.
 
 ### 4.5 `DELETE /api/flashcards/[id]`
 
@@ -113,18 +113,19 @@ Błędy sieci, przekroczenia limitu czasu, nieprawidłowej odpowiedzi lub błęd
 
 Tabela `public.flashcards` zawiera:
 
-| Kolumna      | Typ           | Znaczenie                                               |
-| ------------ | ------------- | ------------------------------------------------------- |
-| `id`         | `uuid`        | klucz główny generowany przez bazę                      |
-| `user_id`    | `uuid`        | właściciel; FK do `auth.users(id)`                      |
-| `polish`     | `text`        | niepuste polskie słowo, maksymalnie 255 znaków          |
-| `english`    | `text`        | niepuste angielskie tłumaczenie, maksymalnie 255 znaków |
-| `created_at` | `timestamptz` | czas utworzenia                                         |
-| `updated_at` | `timestamptz` | czas ostatniej aktualizacji                             |
+| Kolumna      | Typ           | Znaczenie                                                                |
+| ------------ | ------------- | ------------------------------------------------------------------------ |
+| `id`         | `uuid`        | klucz główny generowany przez bazę                                       |
+| `user_id`    | `uuid`        | właściciel; FK do `auth.users(id)`                                       |
+| `polish`     | `text`        | dokładnie jedno niepuste polskie słowo, maksymalnie 255 znaków           |
+| `english`    | `text`        | niepuste angielskie tłumaczenie (może zawierać spacje), maks. 255 znaków |
+| `created_at` | `timestamptz` | czas utworzenia                                                          |
+| `updated_at` | `timestamptz` | czas ostatniej aktualizacji                                              |
 
 Baza ma:
 
 - ograniczenia CHECK blokujące wartości puste lub zawierające wyłącznie białe znaki oraz wartości dłuższe niż 255 znaków dla `polish` i `english`,
+- ograniczenie CHECK `flashcards_polish_single_word` blokujące białe znaki rozdzielające kilka tokenów w `polish`; analogiczne ograniczenie nie dotyczy `english`,
 - indeks `(user_id, created_at desc)`,
 - wyzwalacz aktualizujący `updated_at`,
 - Row Level Security.
@@ -157,8 +158,10 @@ Rola `anon` nie ma dostępu do tabeli `flashcards`.
 
 - ścisła walidacja JSON, typów i dozwolonych pól pozostaje na granicy każdego endpointu,
 - słowo przekazywane do tłumaczenia ma maksymalnie 100 znaków i musi być dokładnie jednym niepustym słowem,
-- fiszki wymagają niepustych `polish` i `english`, maksymalnie po 255 znaków na każdą stronę,
-- trwałe ograniczenia CHECK w PostgreSQL odpowiadają regułom niepustych wartości i limitom 255 znaków dla obu stron fiszki,
+- API wymaga, aby `polish` fiszki zawierało dokładnie jedno niepuste słowo; otaczające białe znaki są przyjmowane i usuwane,
+- `english` musi być niepustym tłumaczeniem, ale może zawierać spacje,
+- obie strony fiszki mają maksymalnie po 255 znaków,
+- trwałe ograniczenia CHECK w PostgreSQL odpowiadają regułom niepustych wartości, pojedynczego polskiego słowa i limitom 255 znaków,
 - identyfikator fiszki jest walidowany przed zapytaniem do bazy,
 - baza stanowi drugą linię ochrony dla trwałych danych.
 

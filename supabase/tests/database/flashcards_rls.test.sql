@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(15);
+select plan(17);
 
 insert into auth.users (
   id,
@@ -114,6 +114,17 @@ select ok(
   'updated_at changes when a flashcard is updated'
 );
 
+select throws_ok(
+  $$
+    update public.flashcards
+    set polish = E'dwa\tsłowa'
+    where id = '11111111-0000-4000-8000-000000000001';
+  $$,
+  '23514',
+  'new row for relation "flashcards" violates check constraint "flashcards_polish_single_word"',
+  'multi-word Polish text is rejected on update'
+);
+
 select is_empty(
   $$
     update public.flashcards
@@ -182,6 +193,16 @@ select throws_ok(
   '23514',
   'new row for relation "flashcards" violates check constraint "flashcards_polish_max_length"',
   'Polish text longer than 255 characters is rejected'
+);
+
+select throws_ok(
+  $$
+    insert into public.flashcards (user_id, polish, english)
+    values ('11111111-1111-4111-8111-111111111111', 'dwa słowa', 'two words');
+  $$,
+  '23514',
+  'new row for relation "flashcards" violates check constraint "flashcards_polish_single_word"',
+  'multi-word Polish text is rejected on insert'
 );
 
 select throws_ok(

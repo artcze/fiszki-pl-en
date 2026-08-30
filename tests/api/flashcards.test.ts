@@ -160,6 +160,19 @@ describe("flashcards API", () => {
   });
 
   it.each([
+    ["POST with a space", POST, jsonContext("POST", { polish: "dwa słowa", english: "two words" })],
+    ["POST with a tab", POST, jsonContext("POST", { polish: "dwa\tsłowa", english: "two words" })],
+    ["PATCH with a space", PATCH, jsonContext("PATCH", { polish: "dwa słowa", english: "two words" }, FLASHCARD_ID)],
+    ["PATCH with a newline", PATCH, jsonContext("PATCH", { polish: "dwa\nsłowa", english: "two words" }, FLASHCARD_ID)],
+  ])("rejects multi-word Polish input for %s", async (_case, handler, requestContext) => {
+    const response = await handler(requestContext);
+
+    expect(response.status).toBe(400);
+    expect(await json(response)).toMatchObject({ error: { code: "INVALID_FLASHCARD" } });
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
+  it.each([
     [PATCH, "PATCH"],
     [DELETE, "DELETE"],
   ])("rejects an invalid UUID for %s", async (handler, method) => {
@@ -193,15 +206,16 @@ describe("flashcards API", () => {
     return GET(context("GET"));
   }
 
-  it("creates a trimmed flashcard with session-derived ownership", async () => {
-    const mock = createClientMock({ data: FLASHCARD, error: null });
+  it("creates a trimmed flashcard with a multi-word English translation and session-derived ownership", async () => {
+    const flashcard = { ...FLASHCARD, english: "castle tower" };
+    const mock = createClientMock({ data: flashcard, error: null });
     vi.mocked(createClient).mockReturnValue(mock.client as never);
 
-    const response = await POST(jsonContext("POST", { polish: "  zamek ", english: " castle  " }));
+    const response = await POST(jsonContext("POST", { polish: "  zamek ", english: " castle tower  " }));
 
     expect(response.status).toBe(201);
-    expect(await json(response)).toEqual({ flashcard: FLASHCARD });
-    expect(mock.spies.insert).toHaveBeenCalledWith({ polish: "zamek", english: "castle", user_id: USER_ID });
+    expect(await json(response)).toEqual({ flashcard });
+    expect(mock.spies.insert).toHaveBeenCalledWith({ polish: "zamek", english: "castle tower", user_id: USER_ID });
   });
 
   it("updates a trimmed owned flashcard", async () => {
