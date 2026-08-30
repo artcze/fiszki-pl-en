@@ -93,7 +93,7 @@ Głównym trwałym zasobem jest `public.flashcards`, powiązany z `auth.users` p
   - poprawić stare odnośniki w README i instrukcjach agentów,
   - wykonać świeży, pełny zestaw kontroli jakości przed zgłoszeniem,
   - zachować zakres MVP bez dodawania funkcji niepotrzebnych do certyfikacji.
-- **Weryfikacja:** ostatni zweryfikowany pełny dowód QA na 2026-08-30 obejmuje Astro check (49 plików, 0 błędów, 0 ostrzeżeń i 0 wskazówek), 102 zaliczone testy Vitest, 15 zaliczonych testów pgTAP / bazy Supabase, zaliczony test E2E oraz audyt zależności `npm ci` z wynikiem 0 podatności. GitHub Actions CI run #24 (`33282374294`) dla commita `4ff90c2` zakończył się sukcesem.
+- **Weryfikacja:** zweryfikowany pełny dowód QA z 2026-08-30 dla commita `a8ae592` obejmuje Astro check (49 plików, 0 błędów, 0 ostrzeżeń i 0 wskazówek), 106 zaliczonych testów Vitest, 17 zaliczonych testów pgTAP / bazy Supabase, zaliczony test E2E, produkcyjny build zakończony powodzeniem oraz `npm ci` / audyt zależności z wynikiem 0 podatności. GitHub Actions CI run #26 (`33284437438`) dla commita `a8ae592` zakończył się sukcesem.
 - **Status:** zrealizowane.
 
 ## Przekazanie backlogu
