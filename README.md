@@ -164,11 +164,16 @@ GitHub Actions wykonuje kontrole jakości dla pushy i pull requestów skierowany
 Kanoniczne dokumenty znajdują się w `context/foundation/`:
 
 - [Indeks dokumentacji](context/foundation/README.md)
+- [Shape notes](context/foundation/shape-notes.md)
 - [PRD](context/foundation/prd.md)
 - [Tech Stack](context/foundation/tech-stack.md)
+- [Infrastruktura](context/foundation/infrastructure.md)
 - [Specyfikacja techniczna](context/foundation/technical-spec.md)
 - [Roadmapa](context/foundation/roadmap.md)
 - [Plan testów](context/foundation/test-plan.md)
+- [Lessons learned](context/foundation/lessons.md)
+
+`shape-notes.md` i początkowe wpisy `lessons.md` są retrospektywnymi, jawnie oznaczonymi rekonstrukcjami opartymi na potwierdzonych decyzjach i historii repozytorium; nie udają nieistniejących historycznych sesji agentowych.
 
 Pliki w `docs/` pozostają tylko jako zgodne wstecz odnośniki do kanonicznej dokumentacji.
 
